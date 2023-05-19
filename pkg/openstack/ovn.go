@@ -120,5 +120,59 @@ func ReconcileOVN(ctx context.Context, instance *corev1beta1.OpenStackControlPla
 			condition.SeverityInfo,
 			corev1beta1.OpenStackControlPlaneOVNReadyRunningMessage))
 	}
+
+	OVNController := &ovnv1.OVNController{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      "ovncontroller",
+			Namespace: instance.Namespace,
+		},
+	}
+
+	if !instance.Spec.Ovn.Enabled {
+		if res, err := EnsureDeleted(ctx, helper, OVNController); err != nil {
+			return res, err
+		}
+		instance.Status.Conditions.Remove(corev1beta1.OpenStackControlPlaneOVNReadyCondition)
+		return ctrl.Result{}, nil
+	}
+
+	helper.GetLogger().Info("Reconciling OVNController", "OVNController.Namespace", instance.Namespace, "OVNController.Name", "ovncontroller")
+	op, err = controllerutil.CreateOrPatch(ctx, helper.GetClient(), OVNController, func() error {
+
+		instance.Spec.Ovn.Template.OVNController.DeepCopyInto(&OVNController.Spec)
+
+		if OVNController.Spec.NodeSelector == nil && instance.Spec.NodeSelector != nil {
+			OVNController.Spec.NodeSelector = instance.Spec.NodeSelector
+		}
+
+		err := controllerutil.SetControllerReference(helper.GetBeforeObject(), OVNController, helper.GetScheme())
+		if err != nil {
+			return err
+		}
+		return nil
+	})
+
+	if err != nil {
+		instance.Status.Conditions.Set(condition.FalseCondition(
+			corev1beta1.OpenStackControlPlaneOVNReadyCondition,
+			condition.ErrorReason,
+			condition.SeverityWarning,
+			corev1beta1.OpenStackControlPlaneOVNReadyErrorMessage,
+			err.Error()))
+		return ctrl.Result{}, err
+	}
+	if op != controllerutil.OperationResultNone {
+		helper.GetLogger().Info(fmt.Sprintf("OVNController %s - %s", OVNController.Name, op))
+	}
+
+	if OVNController.IsReady() {
+		instance.Status.Conditions.MarkTrue(corev1beta1.OpenStackControlPlaneOVNReadyCondition, corev1beta1.OpenStackControlPlaneOVNReadyMessage)
+	} else {
+		instance.Status.Conditions.Set(condition.FalseCondition(
+			corev1beta1.OpenStackControlPlaneOVNReadyCondition,
+			condition.RequestedReason,
+			condition.SeverityInfo,
+			corev1beta1.OpenStackControlPlaneOVNReadyRunningMessage))
+	}
 	return ctrl.Result{}, nil
 }

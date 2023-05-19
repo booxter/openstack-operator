@@ -22,7 +22,6 @@ require (
 	github.com/openstack-k8s-operators/openstack-baremetal-operator/api v0.0.0-20230518053009-43a436586a6c
 	github.com/openstack-k8s-operators/openstack-operator/apis v0.0.0-20230518063227-7c3db0fa5069
 	github.com/openstack-k8s-operators/ovn-operator/api v0.0.0-20230517053349-0237d13e5f1c
-	github.com/openstack-k8s-operators/ovs-operator/api v0.0.0-20230517053110-2821a8dc05fd
 	github.com/openstack-k8s-operators/placement-operator/api v0.0.0-20230517142510-5ebb403dc2f7
 	github.com/operator-framework/api v0.17.3
 	github.com/rabbitmq/cluster-operator v1.14.0
@@ -97,3 +96,6 @@ require (
 )
 
 replace github.com/openstack-k8s-operators/openstack-operator/apis => ./apis
+
+// TODO(ihar) Remove before merge
+replace github.com/openstack-k8s-operators/ovn-operator/api => github.com/booxter/ovn-operator/api v0.0.0-20230518155032-bf07bcbb82e0

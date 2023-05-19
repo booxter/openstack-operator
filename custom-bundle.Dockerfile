@@ -5,7 +5,6 @@ ARG MARIADB_BUNDLE=quay.io/openstack-k8s-operators/mariadb-operator-bundle:lates
 ARG RABBITMQ_BUNDLE=quay.io/openstack-k8s-operators/rabbitmq-cluster-operator-bundle:latest
 ARG PLACEMENT_BUNDLE=quay.io/openstack-k8s-operators/placement-operator-bundle:latest
 ARG OVN_BUNDLE=quay.io/openstack-k8s-operators/ovn-operator-bundle:latest
-ARG OVS_BUNDLE=quay.io/openstack-k8s-operators/ovs-operator-bundle:latest
 ARG NEUTRON_BUNDLE=quay.io/openstack-k8s-operators/neutron-operator-bundle:latest
 ARG ANSIBLEEE_BUNDLE=quay.io/openstack-k8s-operators/openstack-ansibleee-operator-bundle:latest
 ARG DATAPLANE_BUNDLE=quay.io/openstack-k8s-operators/dataplane-operator-bundle:latest
@@ -43,7 +42,6 @@ FROM $MARIADB_BUNDLE as mariadb-bundle
 FROM $RABBITMQ_BUNDLE as rabbitmq-bundle
 FROM $PLACEMENT_BUNDLE as placement-bundle
 FROM $OVN_BUNDLE as ovn-bundle
-FROM $OVS_BUNDLE as ovs-bundle
 FROM $NEUTRON_BUNDLE as neutron-bundle
 FROM $ANSIBLEEE_BUNDLE as openstack-ansibleee-bundle
 FROM $DATAPLANE_BUNDLE as dataplane-bundle
@@ -67,7 +65,6 @@ COPY --from=rabbitmq-bundle /manifests/* /manifests/
 COPY --from=infra-bundle /manifests/* /manifests/
 COPY --from=placement-bundle /manifests/* /manifests/
 COPY --from=ovn-bundle /manifests/* /manifests/
-COPY --from=ovs-bundle /manifests/* /manifests/
 COPY --from=neutron-bundle /manifests/* /manifests/
 COPY --from=openstack-ansibleee-bundle /manifests/* /manifests/
 COPY --from=dataplane-bundle /manifests/* /manifests/
@@ -85,7 +82,6 @@ RUN /workspace/csv-merger \
   --keystone-csv=/manifests/keystone-operator.clusterserviceversion.yaml \
   --placement-csv=/manifests/placement-operator.clusterserviceversion.yaml \
   --ovn-csv=/manifests/ovn-operator.clusterserviceversion.yaml \
-  --ovs-csv=/manifests/ovs-operator.clusterserviceversion.yaml \
   --neutron-csv=/manifests/neutron-operator.clusterserviceversion.yaml \
   --ansibleee-csv=/manifests/openstack-ansibleee-operator.clusterserviceversion.yaml \
   --dataplane-csv=/manifests/dataplane-operator.clusterserviceversion.yaml \

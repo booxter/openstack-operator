@@ -108,7 +108,6 @@ var (
 	manilaCsv      = flag.String("manila-csv", "", "Manila CSV filename")
 	placementCsv   = flag.String("placement-csv", "", "Placement CSV filename")
 	ovnCsv         = flag.String("ovn-csv", "", "OVN CSV filename")
-	ovsCsv         = flag.String("ovs-csv", "", "OVS CSV filename")
 	cinderCsv      = flag.String("cinder-csv", "", "Cinder CSV filename")
 	horizonCsv     = flag.String("horizon-csv", "", "Horizon CSV filename")
 	csvOverrides   = flag.String("csv-overrides", "", "CSV like string with punctual changes that will be recursively applied (if possible)")
@@ -151,7 +150,6 @@ func main() {
 		*baremetalCsv,
 		*placementCsv,
 		*ovnCsv,
-		*ovsCsv,
 		*cinderCsv,
 		*horizonCsv,
 	}
